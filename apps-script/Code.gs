@@ -13,6 +13,7 @@
 
 var NAME = 'Volunteer Applications (test)';
 var NOTIFY_OWNER = true;
+var DEBUG = true;               // shows the real error on the web page while testing. Set to false before real use.
 var MAX_BODY = 60000;           // characters; rejects oversized posts
 var MIN_FILL_MS = 4000;         // anything faster than this is treated as a bot
 
@@ -36,11 +37,13 @@ function doGet() {
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
+  var step = 'start';
   try {
     lock.waitLock(20000);
     var raw = (e && e.postData && e.postData.contents) || '';
     if (!raw || raw.length > MAX_BODY) return json_({ ok: false, error: 'Bad request' });
 
+    step = 'parse';
     var d = JSON.parse(raw);
     if (d.website) return json_({ ok: true, id: 'N/A' });                  // honeypot filled
     if (typeof d.elapsedMs === 'number' && d.elapsedMs < MIN_FILL_MS) return json_({ ok: true, id: 'N/A' });
@@ -54,14 +57,17 @@ function doPost(e) {
     var seen = cache.get(key);
     if (seen) return json_({ ok: true, id: seen });
 
+    step = 'storage';
     var store = ensureStorage_();
     var id = Utilities.getUuid().slice(0, 8).toUpperCase();
     d.id = id;
     d.submittedAt = new Date();
 
+    step = 'sheet';
     var sheet = store.ss.getSheets()[0];
     sheet.appendRow(COLUMNS.map(function (c) { return cell_(d[c[1]]); }));
 
+    step = 'file';
     var fileName = id + ' - ' + safeName_(d.lastName) + ', ' + safeName_(d.firstName) + '.json';
     var copy = JSON.parse(JSON.stringify(d));
     copy.website = undefined; copy.elapsedMs = undefined;
@@ -70,15 +76,20 @@ function doPost(e) {
     cache.put(key, id, 120);
 
     if (NOTIFY_OWNER) {
-      MailApp.sendEmail(Session.getEffectiveUser().getEmail(),
-        'New volunteer application: ' + d.firstName + ' ' + d.lastName,
-        'Role(s): ' + (d.roles || []).join(', ') + '\nReference: ' + id +
-        '\n\nSheet: ' + store.ss.getUrl() + '\nFolder: ' + store.folder.getUrl());
+      // A failed email must never lose or fail a submission that is already saved.
+      try {
+        MailApp.sendEmail(Session.getEffectiveUser().getEmail(),
+          'New volunteer application: ' + d.firstName + ' ' + d.lastName,
+          'Role(s): ' + (d.roles || []).join(', ') + '\nReference: ' + id +
+          '\n\nSheet: ' + store.ss.getUrl() + '\nFolder: ' + store.folder.getUrl());
+      } catch (mailErr) {
+        console.error('email: ' + mailErr);
+      }
     }
     return json_({ ok: true, id: id });
   } catch (ex) {
-    console.error(ex);
-    return json_({ ok: false, error: 'Server error' });
+    console.error(step + ': ' + ex);
+    return json_({ ok: false, error: DEBUG ? (step + ': ' + (ex && ex.message ? ex.message : ex)) : 'Server error' });
   } finally {
     try { lock.releaseLock(); } catch (x) {}
   }
