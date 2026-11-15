@@ -5,5 +5,5 @@ window.APP_CONFIG = {
 
   // Paste your Google Apps Script web app URL here (ends in /exec).
   // Leave it empty to run in test mode (nothing is sent anywhere).
-  ENDPOINT_URL: ""
+  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbxaZ307nXXP0duoDMq1bUS7zvai--PpSxXlFbCyf9UB3H9ahJ8ow9gpzZmUqJpr7qIHeg/exec"
 };
