@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Volunteer Application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="logo" aria-hidden="true">[LOGO]</div>
+    <div>
+      <div class="kicker" id="orgName">Jeff's Basketball League</div>
+      <h1>Coach or referee with us</h1>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="intro">Thank you for considering serving our kids this season. This takes about 8 minutes.</p>
+  <div class="test-banner" id="testBanner" hidden>Test mode: no backend is connected yet, so submissions are shown on screen and not saved. Set ENDPOINT_URL in config.js to connect it.</div>
+
+  <ol class="stepper" id="stepper" aria-label="Application progress"></ol>
+
+  <form id="app" novalidate>
+    <div class="hp" aria-hidden="true"><label>Leave this blank <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+    <!-- STEP 1 -->
+    <section class="card step" data-step="1" aria-labelledby="h1s">
+      <h2 id="h1s" tabindex="-1">About you</h2>
+
+      <fieldset class="field" data-field="roles">
+        <legend>I would like to volunteer as *</legend>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="roles" value="Coach"><span>Coach</span></label>
+          <label class="chip"><input type="checkbox" name="roles" value="Referee"><span>Referee</span></label>
+        </div>
+        <p class="hint">Choose one or both.</p>
+      </fieldset>
+
+      <div class="row">
+        <div class="field" data-field="firstName"><label for="firstName">First name *</label><input id="firstName" name="firstName" type="text" autocomplete="given-name"></div>
+        <div class="field" data-field="lastName"><label for="lastName">Last name *</label><input id="lastName" name="lastName" type="text" autocomplete="family-name"></div>
+      </div>
+      <div class="row">
+        <div class="field" data-field="email"><label for="email">Email *</label><input id="email" name="email" type="email" autocomplete="email"><p class="hint">We use email for schedules, so please use one you check often.</p></div>
+        <div class="field" data-field="phone"><label for="phone">Mobile phone *</label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
+      </div>
+      <div class="row">
+        <div class="field wide" data-field="address"><label for="address">Street address *</label><input id="address" name="address" type="text" autocomplete="street-address"></div>
+        <div class="field" data-field="city"><label for="city">City *</label><input id="city" name="city" type="text" autocomplete="address-level2"></div>
+        <div class="field narrow" data-field="zip"><label for="zip">Zip *</label><input id="zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code"></div>
+      </div>
+      <div class="row">
+        <div class="field narrow2" data-field="birthYear"><label for="birthYear">Birth year *</label><input id="birthYear" name="birthYear" type="text" inputmode="numeric" maxlength="4" placeholder="1985"></div>
+        <fieldset class="field" data-field="sex">
+          <legend>Sex *</legend>
+          <div class="inline"><label class="opt"><input type="radio" name="sex" value="Male">Male</label><label class="opt"><input type="radio" name="sex" value="Female">Female</label></div>
+        </fieldset>
+      </div>
+      <label class="opt"><input type="checkbox" name="smsOptIn" value="Yes">Text me about schedule changes</label>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="card step" data-step="2" aria-labelledby="h2s" hidden>
+      <h2 id="h2s" tabindex="-1">Your background</h2>
+      <div class="row">
+        <div class="field" data-field="knowledge"><label for="knowledge">Basketball knowledge *</label>
+          <select id="knowledge" name="knowledge"><option value="">Choose…</option><option>1 – Limited</option><option>2</option><option>3</option><option>4 – Excellent</option></select></div>
+        <div class="field" data-field="shirtSize"><label for="shirtSize">Shirt size *</label>
+          <select id="shirtSize" name="shirtSize"><option value="">Choose…</option><option>Adult S</option><option>Adult M</option><option>Adult L</option><option>Adult XL</option><option>Adult XXL</option><option>Adult XXXL</option></select></div>
+        <div class="field" data-field="shirtStyle"><label for="shirtStyle">Shirt style *</label>
+          <select id="shirtStyle" name="shirtStyle"><option value="">Choose…</option><option>Polo</option><option>T-shirt</option></select></div>
+      </div>
+
+      <fieldset class="field" data-field="attendsChurch">
+        <legend>Do you regularly attend a local church? *</legend>
+        <div class="chips"><label class="chip"><input type="radio" name="attendsChurch" value="Yes"><span>Yes</span></label><label class="chip"><input type="radio" name="attendsChurch" value="No"><span>No</span></label></div>
+      </fieldset>
+      <div class="field" data-field="churchName" id="churchNameWrap" hidden><label for="churchName">Which church? *</label><input id="churchName" name="churchName" type="text"></div>
+
+      <fieldset class="field">
+        <legend>Have you served in this league before?</legend>
+        <label class="opt"><input type="checkbox" name="servedBefore" value="Coached before">I have coached before</label>
+        <label class="opt"><input type="checkbox" name="servedBefore" value="Refereed before">I have refereed before</label>
+      </fieldset>
+
+      <fieldset class="well">
+        <legend>Children in the league (optional)</legend>
+        <p class="hint">This does not register your child. Registration is separate.</p>
+        <div id="kids"></div>
+        <button type="button" class="link" id="addKid">+ Add another child</button>
+      </fieldset>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="card step" data-step="3" aria-labelledby="h3s" hidden>
+      <h2 id="h3s" tabindex="-1">Division preferences</h2>
+      <p class="hint big">Pick every division you would be glad to serve. Skip this if you have no preference.</p>
+      <div class="two">
+        <fieldset class="box"><legend>Boys</legend>
+          <label class="opt"><input type="checkbox" name="divisions" value="Boys 1st/2nd grade">1st / 2nd grade</label>
+          <label class="opt"><input type="checkbox" name="divisions" value="Boys 3rd/4th grade">3rd / 4th grade</label>
+          <label class="opt"><input type="checkbox" name="divisions" value="Boys 5th/6th grade">5th / 6th grade</label>
+        </fieldset>
+        <fieldset class="box"><legend>Girls</legend>
+          <label class="opt"><input type="checkbox" name="divisions" value="Girls 1st/2nd grade">1st / 2nd grade</label>
+          <label class="opt"><input type="checkbox" name="divisions" value="Girls 3rd/4th grade">3rd / 4th grade</label>
+          <label class="opt"><input type="checkbox" name="divisions" value="Girls 5th/6th grade">5th / 6th grade</label>
+        </fieldset>
+      </div>
+      <label class="opt"><input type="checkbox" name="divNoPref" value="Yes">No preference. Put me where I am needed.</label>
+
+      <div id="refSection" class="subsection" hidden>
+        <h3>Referee details</h3>
+        <div class="row">
+          <div class="field" data-field="refTime"><label for="refTime">Preferred Saturday time *</label>
+            <select id="refTime" name="refTime"><option value="">Choose…</option><option>Saturday morning (8–11 am)</option><option>Saturday midday (11 am–2 pm)</option><option>Saturday afternoon (2–5 pm)</option><option>No preference</option></select></div>
+          <div class="field" data-field="fullCourt"><label for="fullCourt">Willing to referee full-court games? *</label>
+            <select id="fullCourt" name="fullCourt"><option value="">Choose…</option><option>Yes</option><option>No</option></select></div>
+        </div>
+      </div>
+      <p class="hint" id="refNote">Referee questions appear only if you chose Referee on step 1.</p>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="card step" data-step="4" aria-labelledby="h4s" hidden>
+      <div class="titlebar"><h2 id="h4s" tabindex="-1">Practice availability</h2><div class="counter" id="counter" aria-live="polite">0 of 10 marked</div></div>
+      <p class="lead">Tap the times you <strong>cannot</strong> practice Monday, Tuesday, Thursday or Friday. You can mark up to 10. Everything left unmarked counts as open. Wednesday is asked separately below.</p>
+      <div class="cap-msg" id="capMsg" role="status" hidden>You can mark up to 10 times. Unmark one to choose another.</div>
+      <div class="grid" id="grid" role="group" aria-label="Times you cannot practice"></div>
+
+      <fieldset class="well" data-field="wed">
+        <legend>Can you practice on Wednesday from 4:30 to 5:30 pm? *</legend>
+        <p class="hint">Wednesday practice is only offered at 4:30 pm.</p>
+        <div class="chips"><label class="chip"><input type="radio" name="wed" value="Yes"><span>Yes</span></label><label class="chip"><input type="radio" name="wed" value="No"><span>No</span></label></div>
+      </fieldset>
+
+      <div class="subsection">
+        <label class="opt"><input type="checkbox" name="noConflicts" id="noConflicts" value="Yes">I have no conflicts. Any practice time works.</label>
+        <label class="opt"><input type="checkbox" name="preferEarly" value="Yes">I prefer early practices (4:30 start)</label>
+        <label class="opt"><input type="checkbox" name="preferFriday" value="Yes">I prefer Friday practices</label>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="card step" data-step="5" aria-labelledby="h5s" hidden>
+      <h2 id="h5s" tabindex="-1">Faith and review</h2>
+      <div class="well note">[Add one sentence here: why you ask about faith and who reads these answers.]</div>
+      <fieldset class="field" data-field="faith">
+        <legend>Have you accepted Jesus Christ as your personal Savior? *</legend>
+        <div class="inline"><label class="opt"><input type="radio" name="faith" value="Yes">Yes</label><label class="opt"><input type="radio" name="faith" value="No">No</label><label class="opt"><input type="radio" name="faith" value="Not sure">Not sure</label></div>
+      </fieldset>
+      <div class="field" data-field="faithStatement" id="faithWrap">
+        <label for="faithStatement">Tell us about your relationship with Jesus *</label>
+        <textarea id="faithStatement" name="faithStatement" rows="4" maxlength="500"></textarea>
+        <p class="hint right"><span id="faithCount">0</span> / 500</p>
+      </div>
+      <div class="subsection">
+        <h3>Review before you submit</h3>
+        <div id="review"></div>
+      </div>
+      <div class="error-banner" id="submitError" role="alert" hidden></div>
+    </section>
+
+    <div class="nav" id="nav">
+      <button type="button" class="btn ghost" id="backBtn" hidden>Back</button>
+      <button type="submit" class="btn primary" id="nextBtn">Continue</button>
+    </div>
+  </form>
+
+  <section class="card done" id="done" hidden aria-live="polite">
+    <h2 tabindex="-1" id="doneTitle">Thank you!</h2>
+    <p id="doneMsg"></p>
+    <pre class="payload" id="payload" hidden></pre>
+    <button type="button" class="btn ghost" id="againBtn">Start a new application</button>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
